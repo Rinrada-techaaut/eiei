@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Nu Noey..</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Kanit', sans-serif; }
+    </style>
+</head>
+<body class="bg-pink-100 flex items-center justify-center min-h-screen m-0 overflow-hidden">
+
+    <div id="mainContainer" class="bg-white p-10 rounded-3xl shadow-2xl text-center max-w-sm w-[90%] relative border-4 border-pink-200">
+        
+        <div id="askSection">
+            <div class="flex justify-center mb-6">
+                <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExdDgyazhvbnlrczc0MmcwdzNqM2ljcmZ6OXlraDAxOWk2aXRkeDlmNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/rG7GdjuLtGRlHZpi0K/giphy.gif" 
+                     alt="Cute Bear" class="w-48 rounded-2xl shadow-md">
+            </div>
+            <h1 class="text-3xl font-bold text-pink-600 mb-8">คิดถึงพี่มั้ย?</h1>
+            
+            <div class="flex justify-center gap-4 items-center min-h-[60px]">
+                <button id="yesBtn" onclick="celebrate()" 
+                        class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-8 rounded-2xl transform transition hover:scale-110 active:scale-95 shadow-lg z-10">
+                    คิดถึงงงง
+                </button>
+                
+                <button id="noBtn" 
+                        class="bg-gray-400 text-white font-bold py-3 px-8 rounded-2xl relative transition-all duration-300 ease-out shadow-md z-0">
+                    ไม่!!!
+                </button>
+            </div>
+        </div>
+
+        <div id="successSection" class="hidden">
+            <div class="flex justify-center mb-6">
+                <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExazZsd2MxYWljZmZ3eWg1NGV2MGtzZnZiZjk1ODcwMWx0c2IyaXR4MSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/t8xgPfC5oNIRMrNooe/giphy.gif" 
+                     alt="Happy Dance" class="w-48 rounded-2xl shadow-md">
+            </div>
+            <h1 class="text-3xl font-bold text-pink-600 mb-4">แต่พี่ไม่คิดถึงหรอกนะ อิอิ</h1>
+            <p class="text-gray-500 italic">*หยอกเล่น คิดถึงมากๆเลย :)</p>
+            <button onclick="location.reload()" class="mt-6 text-pink-400 hover:underline text-sm">เล่นใหม่</button>
+        </div>
+    </div>
+
+    <script>
+        const noBtn = document.getElementById('noBtn');
+        const threshold = 160; // ระยะที่ปุ่มจะเริ่มรู้สึกตัว
+
+        window.addEventListener('mousemove', (e) => {
+            const btnRect = noBtn.getBoundingClientRect();
+            const btnCenterX = btnRect.left + btnRect.width / 2;
+            const btnCenterY = btnRect.top + btnRect.height / 2;
+
+            // คำนวณระยะห่างระหว่างเมาส์กับปุ่ม
+            const dx = e.clientX - btnCenterX;
+            const dy = e.clientY - btnCenterY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            // ถ้าเมาส์เข้ามาใกล้เกินไป
+            if (distance < threshold) {
+                if (noBtn.style.position !== 'fixed') {
+                    // ล็อคตำแหน่งก่อนเปลี่ยนเป็น fixed เพื่อความต่อเนื่อง
+                    noBtn.style.left = btnRect.left + 'px';
+                    noBtn.style.top = btnRect.top + 'px';
+                    noBtn.style.position = 'fixed';
+                    noBtn.style.margin = '0';
+                }
+
+                // คำนวณทิศทางหนี (Vector ย้อนกลับ)
+                const moveDist = 180; // ระยะที่จะกระโดดหนี
+                let newX = btnRect.left - (dx / distance) * moveDist;
+                let newY = btnRect.top - (dy / distance) * moveDist;
+
+                // เช็คขอบจอ ถ้าจะหลุดจอ ให้วาร์ปไปสุ่มที่อื่นแทน
+                const pad = 50;
+                if (newX < pad || newX > window.innerWidth - btnRect.width - pad ||
+                    newY < pad || newY > window.innerHeight - btnRect.height - pad) {
+                    newX = Math.random() * (window.innerWidth - btnRect.width);
+                    newY = Math.random() * (window.innerHeight - btnRect.height);
+                }
+
+                noBtn.style.left = newX + 'px';
+                noBtn.style.top = newY + 'px';
+            }
+        });
+
+        function celebrate() {
+            document.getElementById('askSection').classList.add('hidden');
+            document.getElementById('successSection').classList.remove('hidden');
+            for(let i = 0; i < 50; i++) { createHeart(); }
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.innerHTML = '❤️';
+            heart.className = 'fixed text-2xl pointer-events-none z-[999] transition-all duration-[3000ms] linear';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.top = '100vh';
+            document.body.appendChild(heart);
+            setTimeout(() => {
+                heart.style.transform = `translateY(-120vh) rotate(${Math.random() * 360}deg)`;
+                heart.style.opacity = '0';
+            }, 100);
+            setTimeout(() => { heart.remove(); }, 3000);
+        }
+    </script>
+</body>
+</html>
